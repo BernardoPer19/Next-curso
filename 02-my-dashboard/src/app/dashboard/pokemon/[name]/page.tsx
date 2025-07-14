@@ -1,29 +1,47 @@
-import { Pokemones } from "@/Pokemons/interfaces/pokemon";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Image from "next/image";
+import { Pokemones } from "@/Pokemons/interfaces/pokemon";
+import { PokemonsResponse } from "@/Pokemons/interfaces/pokemon-response";
 
-interface Props {
-  params: { id: string };
+export async function generateStaticParams() {
+  const data: PokemonsResponse = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
+    .then((res) => res.json());
+
+  return data.results.map((pokemon) => ({
+    name: pokemon.name,
+  }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id, name } = await getPokemon(params.id);
-
-  return {
-    title: `#${id} - ${name}`,
-    description: `Información detallada del Pokémon ${name}`,
-  };
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  try {
+    const { id, name } = await getPokemon(params.name);
+    return {
+      title: `#${id} - ${name}`,
+      description: `Información detallada del Pokémon ${name}`,
+    };
+  } catch {
+    return {
+      title: "Pokémon no encontrado",
+      description: "No se encontró información del Pokémon",
+    };
+  }
 }
 
-const getPokemon = async (id: string): Promise<Pokemones> => {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, {
-    cache: "force-cache",
-  });
-  return await res.json();
+const getPokemon = async (name: string): Promise<Pokemones> => {
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`, {
+      cache: "force-cache",
+    });
+    return await res.json();
+  } catch {
+    notFound(); // Navegación 404 automática
+  }
 };
 
-export default async function PokemonPage({ params }: Props) {
-  const pokemon = await getPokemon(params.id);
+// ❌ NO TIPES explícitamente 'params' aquí tampoco
+export default async function PokemonPage({ params }: any) {
+  const pokemon = await getPokemon(params.name);
 
   return (
     <main className="flex mt-5 flex-col items-center text-slate-800 px-4">

@@ -1,24 +1,39 @@
 "use client";
-import React, { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/store";
+import {
+  decrement,
+  increment,
+  initCounterState,
+} from "@/store/counter/counterSlice";
+import { useEffect } from "react";
 
-function CartCounter() {
-  const [count, setCount] = useState<number>(0);
+interface Props {
+  value: number;
+}
+
+function CartCounter({ value }: Props) {
+  const count = useAppSelector((state) => state.counter.value);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(initCounterState(value));
+  }, [dispatch, value]);
 
   return (
     <div className="flex items-center">
       <div className="flex gap-10 justify-center items-center">
         <button
-          onClick={() => setCount(count + 1)}
-          className="flex justify-center items-center p-2 rounded-2xl bg-gray-900 text-white hover:bg-gray-600 transition-colors"
-        >
-          +1
-        </button>
-        <span> {count}</span>
-        <button
-          onClick={() => setCount(count - 1)}
+          onClick={() => dispatch(decrement())}
           className="flex justify-center items-center p-2 rounded-2xl bg-gray-900 text-white hover:bg-gray-600 transition-colors"
         >
           -1
+        </button>
+        <span> {count}</span>
+        <button
+          onClick={() => dispatch(increment())}
+          className="flex justify-center items-center p-2 rounded-2xl bg-gray-900 text-white hover:bg-gray-600 transition-colors"
+        >
+          +1
         </button>
       </div>
     </div>
