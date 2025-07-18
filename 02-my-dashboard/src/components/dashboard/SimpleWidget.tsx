@@ -1,7 +1,18 @@
 
-export const SimpleWidget = () => {
+
+interface Props {
+  title: string
+  subtitle?: string
+  label?: string
+  href?: string
+}
+
+
+export const SimpleWidget = ({title,subtitle}: Props) => {
+
   return (
-    <div className="bg-white shadow-xl p-3 sm:min-w-[25%] min-w-full  rounded-2xl border-1 border-gray-50 mx-2">
+    <main className="flex justify-center items-center w-full h-screen ">
+      <div className="bg-white shadow-xl p-3 sm:min-w-[25%] min-w-full  rounded-2xl border-1 border-gray-50 mx-2">
       <div className="flex flex-col">
         <div>
           <h2 className="font-bold text-gray-600 text-center">Contador</h2>
@@ -9,12 +20,10 @@ export const SimpleWidget = () => {
         <div className="my-3">
           <div className="flex flex-row items-center justify-center space-x-1 ">
             <div id="icon">
-              {/* Icono irá aquí */}
-              {/* <IoCafeOutline size={50} /> */}
             </div>
             <div id="temp" className="text-center">
-              <h4 className="text-4xl">Titulo</h4>
-              <p className="text-xs text-gray-500">Subtitulo</p>
+              <h4 className="text-4xl">{title}</h4>
+              <p className="text-xs text-gray-500">{subtitle}</p>
             </div>
           </div>
         </div>
@@ -25,5 +34,6 @@ export const SimpleWidget = () => {
         
       </div>
     </div>
+    </main>
   )
 }
