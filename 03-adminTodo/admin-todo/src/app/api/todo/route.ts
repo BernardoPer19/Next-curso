@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma'
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server';
 import * as yup from 'yup'
 
 export async function GET(request: Request) {
@@ -36,11 +36,28 @@ const postSchema = yup.object({
 export async function POST(request: Request) {
 
     try {
-        const body = await postSchema.validate(await request.json()) ;
+        const body = await postSchema.validate(await request.json());
         const todo = await prisma.todo.create({ data: body });
 
         return NextResponse.json(body);
     } catch (error) {
         return NextResponse.json(error, { status: 400 });
+    }
+}
+
+
+
+export async function DELETE(request: Request) {
+    try {
+        const deleteComplete = await prisma.todo.deleteMany({
+            where: {
+                complete: true
+            }
+        })
+
+        return NextResponse.json(deleteComplete)
+
+    } catch (error) {
+
     }
 }

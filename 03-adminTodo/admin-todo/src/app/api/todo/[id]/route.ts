@@ -20,11 +20,13 @@ const getTodo = async (id: string): Promise<Todo | null> => {
 }
 
 
+
+
 export async function GET(request: NextRequest, { params }: SegmentParams) {
-    const { id } = params
+    const { id } = await params
 
     try {
-        const todo = getTodo(id)
+        const todo = await getTodo(id)
 
         if (!todo) {
             return NextResponse.json({ error: `Todo con este id: ${id} no encontrado` }, { status: 404 })
@@ -40,6 +42,30 @@ export async function GET(request: NextRequest, { params }: SegmentParams) {
 
 
 
+export async function DELETE(request: NextRequest, { params }: SegmentParams) {
+    const { id } = await params
+
+    try {
+        const todo = await getTodo(id)
+
+        if (!todo) {
+            return NextResponse.json({ error: `Todo con este id: ${id} no encontrado` }, { status: 404 })
+        }
+
+        await prisma.todo.delete({
+            where: {
+                id
+            }
+        })
+
+        return NextResponse.json(todo)
+    } catch (error) {
+        console.error('Error al buscar el todo:', error)
+        return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
+    }
+}
+
+
 const putSchema = yup.object({
     complete: yup.boolean().optional(),
     description: yup.string().optional()
@@ -48,10 +74,10 @@ const putSchema = yup.object({
 
 
 export async function PUT(request: NextRequest, { params }: SegmentParams) {
-    const { id } = params
+    const { id } = await params
 
     try {
-        const todo = getTodo(id)
+        const todo = await getTodo(id)
 
         if (!todo) {
             return NextResponse.json({ error: `Todo con este id: ${id} no encontrado` }, { status: 404 })
