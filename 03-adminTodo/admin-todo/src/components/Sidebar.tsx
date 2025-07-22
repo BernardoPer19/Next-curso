@@ -5,6 +5,7 @@ import { CiBookmarkCheck, CiLogout } from "react-icons/ci";
 import SidebarItem from "./SidebarItem";
 import { BiX } from "react-icons/bi";
 import { FiHome, FiFolder, FiUsers, FiSettings } from "react-icons/fi";
+import { TbServer2 } from "react-icons/tb";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -25,16 +26,16 @@ const menuItem = [
     icon: <FiFolder size={22} />,
   },
   {
-    href: "dashboard/rest-todos",
-    path: "/rest-todos",
+    href: "/dashboard/rest-todos",
+    path: "/dashboard/rest-todos",
     title: "REST Todos",
     icon: <FiUsers size={22} />,
   },
   {
-    href: "/server",
-    path: "/server",
+    href: "/dashboard/server-actions",
+    path: "/dashboard/server",
     title: "Server Actions",
-    icon: <FiSettings size={22} />,
+    icon: <TbServer2 size={22} />,
   },
 ];
 
@@ -42,12 +43,19 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   return (
     <>
       <aside
-        className={`fixed z-50 top-0 left-0 h-screen bg-white border-r p-6 transition-transform duration-300 ease-in-out
-    ${isOpen ? "translate-x-0" : "-translate-x-full"}
-    w-64 md:translate-x-0 md:static md:w-4/12 lg:w-1/4 xl:w-1/5 2xl:w-[15%]'`}
+        className={`
+    fixed z-50 top-0 left-0 h-screen bg-white border-r p-6
+    transition-transform duration-300 ease-in-out
+    w-64
+    ${isOpen ? "translate-x-0" : "-translate-x-full"} 
+  `}
       >
         <div>
-          <BiX className="text-red-500" size={40} onClick={toggleSidebar} />
+          <BiX
+            className="text-red-500 z-[11111111111]"
+            size={40}
+            onClick={toggleSidebar}
+          />
           <div className="-mx-6 px-6 py-4">
             <Link href="/" title="home">
               <Image

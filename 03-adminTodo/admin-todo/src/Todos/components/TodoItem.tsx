@@ -1,40 +1,64 @@
 import { Todo } from "@prisma/client";
-import React from "react";
+import React, { useOptimistic } from "react";
 import styles from "./TodoItem.module.css";
+import { startTransition } from "react";
 
 interface Props {
   todo: Todo;
   onToggleDone: (id: string, complete: boolean) => Promise<void>;
-  onDelete: (id: string) => void;
+  // onDelete: (id: string) => void;
 }
 
 function TodoItem({
   todo,
   onToggleDone,
-  onDelete,
-}: Props) {
+}: // onDelete,
+Props) {
+  const [optimisticTodo, toggleTodoOptimistic] = useOptimistic(
+    todo,
+    (state, newCompleteValue: boolean) => ({
+      ...state,
+      complete: newCompleteValue,
+    })
+  );
+
+  const onToggleTodo = async () => {
+    const newComplete = !optimisticTodo.complete;
+
+    startTransition(() => {
+      toggleTodoOptimistic(newComplete);
+    });
+
+    try {
+      await onToggleDone(todo.id, newComplete);
+    } catch (error) {
+      startTransition(() => {
+        toggleTodoOptimistic(!newComplete); // revertir en caso de error
+      });
+    }
+  };
+
   const handleToggle = () => {
     onToggleDone(todo.id, !todo.complete);
   };
 
   const handleDelete = () => {
-    onDelete(todo.id);
+    // onDelete(todo.id);
   };
 
-
-
-
   return (
-    <div className={todo.complete ? styles.todoDone : styles.todoPending}>
+    <div
+      className={optimisticTodo.complete ? styles.todoDone : styles.todoPending}
+    >
       <p className="text-gray-800 font-medium text-center sm:text-left">
-        {todo.description}
+        {optimisticTodo.description}
       </p>
       <div className="flex gap-2">
         <button
-          onClick={handleToggle}
+          onClick={onToggleTodo}
           className="px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm"
         >
-          {todo.complete ? "Desmarcar" : "Completar"}
+          {optimisticTodo.complete ? "Desmarcar" : "Completar"}
         </button>
         <button
           onClick={handleDelete}

@@ -2,30 +2,29 @@
 
 import { FormEvent, useState } from "react";
 import { IoTrashOutline } from "react-icons/io5";
-import { deleteOfCompletes, post } from "../helpers/todos";
+import { deleteOfCompletes } from "../helpers/todos";
 import { useRouter } from "next/navigation";
+import { addTodo, deletCompletesTOPDFOS } from "../actions/todo-actions";
 
 export const NewTodo = () => {
   const [description, setDescription] = useState("");
   const router = useRouter();
+
   const formSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!description.trim()) return;
-
     try {
-      const nuevoTodo = await post(description); // espera la creación
-      console.log("Tarea creada:", nuevoTodo);
-      setDescription(""); // limpia input
-      router.refresh();
+      // const nuevoTodo = await post(description); // espera la creación
+      await addTodo(description);
+      setDescription("");
     } catch (error) {
       console.error("Error al crear la tarea:", error);
     }
   };
 
-  const deleteCompleted = () => {
-    deleteOfCompletes();
-    router.refresh()
+  const deleteCompleted = async () => {
+    await deletCompletesTOPDFOS();
   };
 
   return (

@@ -13,13 +13,13 @@ export default function ClientLayout({
 
   return (
     <>
-      <Sidebar
-        isOpen={sidebarOpen}
-        toggleSidebar={() => setSidebarOpen((prev) => !prev)}
-      />
-      <div className="ml-auto mb-6 lg:w-[75%] xl:w-[80%] 2xl:w-[85%] min-h-screen">
+      <div className="ml-auto mb-6 w-full">
         <TopMenu toggleSidebar={() => setSidebarOpen((prev) => !prev)} />
         <div className="px-6 pt-6">{children}</div>
+        <Sidebar
+          isOpen={sidebarOpen}
+          toggleSidebar={() => setSidebarOpen((prev) => !prev)}
+        />
       </div>
     </>
   );
