@@ -1,16 +1,13 @@
-"use client";
 import Link from "next/link";
 import Image from "next/image";
-import { CiBookmarkCheck, CiLogout } from "react-icons/ci";
-import SidebarItem from "./SidebarItem";
-import { BiX } from "react-icons/bi";
-import { FiHome, FiFolder, FiUsers, FiSettings } from "react-icons/fi";
+import { BiUser, BiX } from "react-icons/bi";
+import { FiHome, FiFolder, FiUsers } from "react-icons/fi";
 import { TbServer2 } from "react-icons/tb";
-
-type SidebarProps = {
-  isOpen: boolean;
-  toggleSidebar: () => void;
-};
+import SidebarItem from "./SidebarItem";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import CloseSidebarsito from "./CloseSidebarsito";
+import LogoutButton from "./LogoutButton";
 
 const menuItem = [
   {
@@ -33,56 +30,71 @@ const menuItem = [
   },
   {
     href: "/dashboard/server-actions",
-    path: "/dashboard/server",
+    path: "/dashboard/server-actions", // corregido
     title: "Server Actions",
     icon: <TbServer2 size={22} />,
   },
+  {
+    href: "/dashboard/cookies",
+    path: "/dashboard/cookies",
+    title: "Numbers by Cookies",
+    icon: <TbServer2 size={22} />,
+  },
+  {
+    href: "/dashboard/products",
+    path: "/dashboard/products",
+    title: "WawaShop",
+    icon: <TbServer2 size={22} />,
+  },
+  {
+    href: "/dashboard/profile",
+    path: "/dashboard/profile",
+    title: "Profile",
+    icon: <BiUser size={22} />,
+  },
 ];
 
-export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
+export default async function Sidebar() {
+  const session = await getServerSession(authOptions);
+
+  const AvatarUrl = session?.user?.image
+    ? session.user.image
+    : "https://tailus.io/sources/blocks/stats-cards/preview/images/logo.svg";
+
+  const userName = session?.user?.name ?? "No name";
+  const userEmail = session?.user?.email ?? "No email";
+
+  // const userROle = session?.user.role ?? "a"
+
   return (
-    <>
-      <aside
-        className={`
-    fixed z-50 top-0 left-0 h-screen bg-white border-r p-6
-    transition-transform duration-300 ease-in-out
-    w-64
-    ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-  `}
-      >
-        <div>
-          <BiX
-            className="text-red-500 z-[11111111111]"
-            size={40}
-            onClick={toggleSidebar}
-          />
-          <div className="-mx-6 px-6 py-4">
-            <Link href="/" title="home">
-              <Image
-                src="https://tailus.io/sources/blocks/stats-cards/preview/images/logo.svg"
-                width={128}
-                height={40}
-                alt="tailus logo"
-                className="w-32"
-              />
-            </Link>
-          </div>
+    <aside className="fixed z-50 top-0 left-0 h-screen w-64 bg-white border-r p-6 transition-transform duration-300 ease-in-out">
+      <div>
+        <div className="flex justify-end">
+          <CloseSidebarsito />
+        </div>
 
-          <div className="mt-8 text-center">
+        <div className="-mx-6 px-6 py-4 rounded-r-2xl">
+          <Link href="/" title="home">
             <Image
-              src="https://tailus.io/sources/blocks/stats-cards/preview/images/second_user.webp"
-              width={100}
-              height={100}
-              alt="User"
-              className="w-10 h-10 m-auto rounded-full object-cover lg:w-28 lg:h-28"
+              src={AvatarUrl}
+              width={128}
+              height={40}
+              alt="user logo"
+              className="w-32 rounded-full"
             />
-            <h5 className="hidden mt-4 text-xl font-semibold text-gray-600 lg:block">
-              Cynthia J. Watts
-            </h5>
-            <span className="hidden text-gray-400 lg:block">Admin</span>
-          </div>
+          </Link>
+        </div>
 
-          <ul className="space-y-2 tracking-wide mt-8">
+        <div className="mt-8 text-center">
+          <h5 className="mt-4 text-xl font-semibold text-gray-900 lg:block">
+            {userName}
+          </h5>
+          <h5 className="mt-1 text-sm text-gray-600 lg:block">{userEmail}</h5>
+          <span className=" text-black lg:block">Admin</span>
+        </div>
+
+        <div className="overflow-y-auto max-h-[calc(100vh-250px)] mt-8">
+          <ul className="space-y-2 tracking-wide">
             {menuItem.map((item) => (
               <SidebarItem
                 key={item.href}
@@ -94,14 +106,11 @@ export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
             ))}
           </ul>
         </div>
+      </div>
 
-        <div className="px-6 -mx-6 pt-4 flex justify-between items-center border-t">
-          <button className="px-4 py-3 flex items-center space-x-4 rounded-md text-gray-600 group">
-            <CiLogout />
-            <span className="group-hover:text-gray-700">Logout</span>
-          </button>
-        </div>
-      </aside>
-    </>
+      <div className="px-6 -mx-6 pt-4 flex justify-between items-center border-t">
+        {/* <LogoutButton /> */}
+      </div>
+    </aside>
   );
 }

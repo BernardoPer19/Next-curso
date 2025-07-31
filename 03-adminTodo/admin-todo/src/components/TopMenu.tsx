@@ -1,21 +1,31 @@
-import { CiMenuBurger, CiSearch, CiChat1, CiBellOn } from "react-icons/ci";
+"use client";
 
-type TopMenuProps = {
-  toggleSidebar: () => void;
+import { useState } from "react";
+import {
+  CiMenuBurger,
+  CiSearch,
+  CiChat1,
+  CiShoppingBasket,
+} from "react-icons/ci";
+
+type TopMenuClientProps = {
+  totalItems: number;
 };
 
-export default function TopMenu({ toggleSidebar }: TopMenuProps) {
+export default function TopMenuClient({ totalItems }: TopMenuClientProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="sticky z-10 top-0 h-16 border-b bg-white ">
+    <div className="sticky z-10 top-0 h-16 border-b bg-white">
       <div className="px-6 flex items-center justify-between space-x-4">
-        <h5 hidden className="text-2xl text-gray-600 font-medium ">
+        <h5 hidden className="text-2xl text-gray-600 font-medium">
           Dashboard
         </h5>
         <button className="w-12 h-16 -mr-2 border">
           <CiMenuBurger
             size={30}
             className="text-black z-50"
-            onClick={toggleSidebar}
+            onClick={() => setSidebarOpen((prev) => !prev)}
           />
         </button>
         <div className="flex space-x-2">
@@ -37,8 +47,9 @@ export default function TopMenu({ toggleSidebar }: TopMenuProps) {
           <button className="flex items-center justify-center w-10 h-10 rounded-xl border bg-gray-100">
             <CiChat1 size={25} className="text-black" />
           </button>
-          <button className="flex items-center justify-center w-10 h-10 rounded-xl border bg-gray-100">
-            <CiBellOn size={25} className="text-black" />
+          <button className="flex items-center justify-center w-fit h-10 rounded-xl border bg-gray-100">
+            <span className="text-sm mr-2 text-black">{totalItems}</span>
+            <CiShoppingBasket size={25} className="text-black" />
           </button>
         </div>
       </div>
