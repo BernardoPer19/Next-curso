@@ -19,7 +19,12 @@ model Todo {
   complete    Boolean  @default(false)
   createAt    DateTime @default(now())
   updateAt    DateTime @updatedAt
+
+  // 🔽 Relación con el usuario
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 
 model Account {
   id                       String  @id @default(uuid())
@@ -60,11 +65,15 @@ model User {
   isActive      Boolean   @default(true)
   emailVerified DateTime? @map("email_verified")
   image         String?
+  password      String?
   accounts      Account[]
   sessions      Session[]
 
+  todos         Todo[]
+
   @@map("users")
 }
+
 
 model VerificationToken {
   identifier String

@@ -56,7 +56,6 @@ const menuItem = [
 
 export default async function Sidebar() {
   const session = await getServerSession(authOptions);
-
   const AvatarUrl = session?.user?.image
     ? session.user.image
     : "https://tailus.io/sources/blocks/stats-cards/preview/images/logo.svg";
@@ -64,7 +63,7 @@ export default async function Sidebar() {
   const userName = session?.user?.name ?? "No name";
   const userEmail = session?.user?.email ?? "No email";
 
-  // const userROle = session?.user.role ?? "a"
+  const userRole = session?.user?.roles ?? "client";
 
   return (
     <aside className="fixed z-50 top-0 left-0 h-screen w-64 bg-white border-r p-6 transition-transform duration-300 ease-in-out">
@@ -90,7 +89,7 @@ export default async function Sidebar() {
             {userName}
           </h5>
           <h5 className="mt-1 text-sm text-gray-600 lg:block">{userEmail}</h5>
-          <span className=" text-black lg:block">Admin</span>
+          <span className=" text-black lg:block">{userRole}</span>
         </div>
 
         <div className="overflow-y-auto max-h-[calc(100vh-250px)] mt-8">
@@ -109,7 +108,7 @@ export default async function Sidebar() {
       </div>
 
       <div className="px-6 -mx-6 pt-4 flex justify-between items-center border-t">
-        {/* <LogoutButton /> */}
+        <LogoutButton />
       </div>
     </aside>
   );

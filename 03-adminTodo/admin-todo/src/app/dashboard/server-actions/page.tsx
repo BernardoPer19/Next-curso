@@ -1,22 +1,31 @@
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 export const revalidate = false;
 
-import React from 'react'
-import prisma from '@/lib/prisma'
-import TodosFrid from '@/Todos/components/TodosFrid'
-import { NewTodo } from '@/Todos/components/NewTodo'
+import React from "react";
+import prisma from "@/lib/prisma";
+import TodosFrid from "@/Todos/components/TodosFrid";
+import { NewTodo } from "@/Todos/components/NewTodo";
+import { getUserSessionServer } from "@/Auth/actions/serverSession";
+import { redirect } from "next/navigation";
 
 async function RestTodos() {
+  const user = await getUserSessionServer();
 
-  const todos = await prisma?.todo.findMany({orderBy: {description: "desc"}})
+  if (!user) {
+    redirect("api/auth/signin");
+  }
 
+  const todos = await prisma?.todo.findMany({
+    where: { userId: user.id },
+    orderBy: { description: "desc" },
+  });
 
   return (
     <div>
-      <NewTodo/>
-      <TodosFrid todos={todos}/>
+      <NewTodo />
+      <TodosFrid todos={todos} />
     </div>
-  )
+  );
 }
 
-export default RestTodos
+export default RestTodos;

@@ -1,6 +1,9 @@
 "use client";
 import { Product } from "@/data/productos";
-import { addProductToCart } from "@/shoping-cart/actions/actions";
+import {
+  addProductToCart,
+  removeProductCart,
+} from "@/shoping-cart/actions/actions";
 import Image from "next/image";
 import { IoAddCircleOutline, IoTrashOutline } from "react-icons/io5";
 
@@ -9,12 +12,16 @@ interface Props {
 }
 
 export const ProductCard = ({ product }: Props) => {
-  const onAddToCard = async () => {
+  const onAddToCart = async () => {
     addProductToCart(product.id);
   };
 
+  const onRemoveCart = async () => {
+    removeProductCart(product.id);
+  };
+
   return (
-    <div className="bg-white shadow rounded-lg max-w-sm dark:bg-gray-800 dark:border-gray-100">
+    <div className="bg-white shadow rounded-alg max-w-sm dark:bg-gray-800 dark:border-gray-100">
       {/* Product Image */}
       <div className="p-2">
         <Image
@@ -67,9 +74,16 @@ export const ProductCard = ({ product }: Props) => {
                 <IoAddCircleOutline size={25} />
               </button>
             </form>
-            <button className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-              <IoTrashOutline size={20} />
-            </button>
+
+            <form
+              action={async (formData) => {
+                await removeProductCart(product.id);
+              }}
+            >
+              <button className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                <IoTrashOutline size={20} />
+              </button>
+            </form>
           </div>
         </div>
       </div>

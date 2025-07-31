@@ -1,7 +1,6 @@
 'use server';
-import { getCookieCart } from "@/cookies/cookieCart";
+import { getCookieCart, getCookieStore } from "@/cookies/cookieCart";
 import { cookies } from "next/headers";
-
 /**
  * Agrega 1 unidad del producto con el ID dado al carrito
  */
@@ -26,3 +25,18 @@ export const addProductToCart = async (productId: string) => {
 };
 
 
+
+export const removeProductCart = async (productId: string) => {
+    const cookieCart = await getCookieCart();
+
+    delete cookieCart[productId];
+
+
+
+    const store = await cookies();
+    store.set("cart", JSON.stringify(cookieCart), {
+        path: '/',
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 7, // 1 semana
+    });
+};

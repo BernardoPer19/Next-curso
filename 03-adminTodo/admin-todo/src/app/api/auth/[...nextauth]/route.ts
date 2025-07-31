@@ -1,11 +1,20 @@
+//imports
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
 import prisma from "@/lib/prisma";
+
+//CredentialProviders
+import CredentialsProvider from "next-auth/providers/credentials";
+
+//Providers
+import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github"
+import { signInEmailPassword } from "@/Auth/actions/auth-actions";
+
 
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
+
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID ?? "",
@@ -15,6 +24,27 @@ export const authOptions: NextAuthOptions = {
             clientId: process.env.GITHUB_ID ?? "",
             clientSecret: process.env.GITHUB_SECRET ?? "",
         }),
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "email", placeholder: "user@gmail.om" },
+                password: { label: "Contraseña", type: "password", placeholder: "******" }
+            },
+            async authorize(credentials, req) {
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error("Email y contraseña son obligatorios");
+                }
+
+                const user = await signInEmailPassword(credentials.email, credentials.password);
+
+                if (user) {
+                    return user
+                } else {
+                    return null
+
+                }
+            }
+        })
     ],
 
     session: {
@@ -29,10 +59,10 @@ export const authOptions: NextAuthOptions = {
         },
         async jwt({ token, user }) {
             if (user) {
-                // Primera vez que el token se genera
                 token.id = user.id;
                 token.email = user.email;
             }
+
 
             if (!token.email) {
                 console.error("No email found in token");
@@ -43,6 +73,11 @@ export const authOptions: NextAuthOptions = {
                 const dbUser = await prisma.user.findUnique({
                     where: { email: token.email },
                 });
+
+                if (dbUser?.isActive === false) {
+                    throw Error("Usuario no esta activo")
+                }
+
 
                 if (dbUser) {
                     token.roles = dbUser.roles ?? [];
@@ -72,7 +107,7 @@ export const authOptions: NextAuthOptions = {
 
     },
 
- 
+
 };
 
 const handler = NextAuth(authOptions);

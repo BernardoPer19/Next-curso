@@ -15,44 +15,62 @@ type TopMenuClientProps = {
 export default function TopMenuClient({ totalItems }: TopMenuClientProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+
   return (
-    <div className="sticky z-10 top-0 h-16 border-b bg-white">
-      <div className="px-6 flex items-center justify-between space-x-4">
-        <h5 hidden className="text-2xl text-gray-600 font-medium">
-          Dashboard
-        </h5>
-        <button className="w-12 h-16 -mr-2 border">
-          <CiMenuBurger
-            size={30}
-            className="text-black z-50"
-            onClick={() => setSidebarOpen((prev) => !prev)}
-          />
+    <header className="sticky top-0 z-10 h-16 border-b bg-white shadow-sm">
+      <div className="px-6 flex items-center justify-between space-x-4 h-full">
+        <h1 className="sr-only">Dashboard</h1>
+
+        {/* Toggle Sidebar */}
+        <button
+          onClick={toggleSidebar}
+          aria-label="Abrir menú"
+          className="w-12 h-12 flex items-center justify-center border rounded-md hover:bg-gray-100 transition"
+        >
+          <CiMenuBurger size={26} className="text-black" />
         </button>
-        <div className="flex space-x-2">
-          <div hidden className="md:block">
-            <div className="relative flex items-center text-gray-400 focus-within:text-cyan-400">
-              <span className="absolute left-4 h-6 flex items-center pr-3 border-r border-gray-300">
-                <CiSearch className="text-black" />
-              </span>
-              <input
-                type="search"
-                placeholder="Search here"
-                className="w-full pl-14 pr-4 py-2.5 rounded-xl text-sm text-gray-600 outline-none border border-gray-300 focus:border-cyan-300 transition"
-              />
-            </div>
+
+        {/* Right icons */}
+        <div className="flex items-center space-x-3">
+          {/* Search (only for larger screens) */}
+          <div className="hidden md:block relative text-gray-400 focus-within:text-cyan-400">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 pr-3 border-r border-gray-300">
+              <CiSearch className="text-black" />
+            </span>
+            <input
+              type="search"
+              placeholder="Buscar..."
+              className="w-full pl-14 pr-4 py-2.5 rounded-xl text-sm text-gray-700 outline-none border border-gray-300 focus:border-cyan-400 transition"
+              aria-label="Buscar"
+            />
           </div>
-          <button className="flex items-center justify-center w-10 h-10 rounded-xl border bg-gray-100">
+
+          {/* Compact icons */}
+          <button
+            className="w-10 h-10 flex items-center justify-center rounded-xl border bg-gray-100 hover:bg-gray-200 transition"
+            aria-label="Buscar"
+          >
             <CiSearch className="text-black" />
           </button>
-          <button className="flex items-center justify-center w-10 h-10 rounded-xl border bg-gray-100">
-            <CiChat1 size={25} className="text-black" />
+
+          <button
+            className="w-10 h-10 flex items-center justify-center rounded-xl border bg-gray-100 hover:bg-gray-200 transition"
+            aria-label="Mensajes"
+          >
+            <CiChat1 size={24} className="text-black" />
           </button>
-          <button className="flex items-center justify-center w-fit h-10 rounded-xl border bg-gray-100">
+
+          {/* Cart */}
+          <button
+            className="flex items-center justify-center h-10 px-3 rounded-xl border bg-gray-100 hover:bg-gray-200 transition"
+            aria-label="Carrito de compras"
+          >
             <span className="text-sm mr-2 text-black">{totalItems}</span>
-            <CiShoppingBasket size={25} className="text-black" />
+            <CiShoppingBasket size={24} className="text-black" />
           </button>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
